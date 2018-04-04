@@ -330,9 +330,9 @@ class ArrayDeclarationSniff implements Sniff
             if ($fix === true) {
                 $phpcsFile->fixer->addNewlineBefore($arrayEnd);
             }
-        } else if ($tokens[$arrayEnd]['column'] !== $keywordStart) {
+        } else if ($tokens[$arrayEnd]['column'] !== $varStart - 3) {
             // Check the closing bracket is lined up under the "a" in array.
-            $expected = ($keywordStart - 1);
+            $expected = ($varStart - 1 - 3);
             $found    = ($tokens[$arrayEnd]['column'] - 1);
             $error    = 'Closing parenthesis not aligned correctly; expected %s space(s) but found %s';
             $data     = [
