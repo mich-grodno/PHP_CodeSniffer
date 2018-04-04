@@ -314,6 +314,14 @@ class ArrayDeclarationSniff implements Sniff
         $tokens       = $phpcsFile->getTokens();
         $keywordStart = $tokens[$stackPtr]['column'];
 
+        $varStart = $keywordStart;
+        for ($i = $stackPtr; $i > 0; $i--) {
+            if ($tokens[$i]['type'] == 'T_VARIABLE') {
+                $varStart = $tokens[$i]['column'] - 1 + 4;
+                break;
+            }
+        }
+
         // Check the closing bracket is on a new line.
         $lastContent = $phpcsFile->findPrevious(T_WHITESPACE, ($arrayEnd - 1), $arrayStart, true);
         if ($tokens[$lastContent]['line'] === $tokens[$arrayEnd]['line']) {
@@ -604,7 +612,7 @@ class ArrayDeclarationSniff implements Sniff
                         $phpcsFile->fixer->addNewlineBefore($value['value']);
                     }
                 } else if ($tokens[($value['value'] - 1)]['code'] === T_WHITESPACE) {
-                    $expected = $keywordStart;
+                    $expected = $varStart;
 
                     $first = $phpcsFile->findFirstOnLine(T_WHITESPACE, $value['value'], true);
                     $found = ($tokens[$first]['column'] - 1);
@@ -660,8 +668,8 @@ class ArrayDeclarationSniff implements Sniff
         $numValues = count($indices);
 
         // $indicesStart  = ($keywordStart + 1);
-        $indicesStart  = ($data[1] + 1 + 4);
-        
+        $indicesStart  = ($varStart + 1);
+
         $indexLine     = $tokens[$stackPtr]['line'];
         $lastIndexLine = null;
         foreach ($indices as $index) {
