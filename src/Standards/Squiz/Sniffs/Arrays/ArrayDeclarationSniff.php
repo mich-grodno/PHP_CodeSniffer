@@ -316,10 +316,15 @@ class ArrayDeclarationSniff implements Sniff
 
         $varStart = $keywordStart;
         for ($i = $stackPtr; $i > 0; $i--) {
-            if ($tokens[$i]['type'] == 'T_VARIABLE') {
-                $varStart = $tokens[$i]['column'] - 1 + 4;
+            if ($tokens[$i]['column'] == 1) {
+                if ($tokens[$i]['type'] == 'T_WHITESPACE') {
+                    $varStart = $tokens[$i]['length'] + 4;
+                    break;
+                }
+                $varStart = 4;
                 break;
             }
+
         }
 
         // Check the closing bracket is on a new line.
